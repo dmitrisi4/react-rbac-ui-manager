@@ -25,8 +25,8 @@ export interface IconsInterfaceInternal {
 export interface ComponentsInterfaceInternal {
     AddResource: ComponentType;
     AddRole: ComponentType;
-    RoleTag: ComponentType;
-    CheckboxTableContainer: ComponentType;
+    RoleTag: ComponentType | React.ComponentType<React.HTMLAttributes<HTMLDivElement>>;
+    CheckboxTableContainer: ComponentType | React.ComponentType<React.HTMLAttributes<HTMLDivElement>>;
 }
 
 export type ThemeType = { theme: Theme };
