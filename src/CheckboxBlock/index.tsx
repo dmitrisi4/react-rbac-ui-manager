@@ -218,7 +218,7 @@ const CheckboxBlock = ({
                         if (reason !== 'backdropClick') {
                             handleCloseModal(true);
                         }
-				    }}>
+		}}>
                 <DialogContainer>
                     <DialogTitle>Delete Resources</DialogTitle>
                     <DialogContent>
