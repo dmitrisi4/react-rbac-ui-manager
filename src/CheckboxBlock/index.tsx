@@ -175,11 +175,12 @@ const CheckboxBlock = ({
         <Components.CheckboxTableContainer>
             <Dialog
                 open={modalIsOpen}
-                onClose={() => {
-                    handleCloseModal(false);
-                }}
-                disableBackdropClick
-            >
+                onClose={(e, reason) => {
+                    if (reason !== 'backdropClick') {
+                        handleCloseModal(false);
+                    }
+                }}>
+                
                 <DialogContainer>
                     <DialogTitle>Role</DialogTitle>
                     <DialogContent>
@@ -212,7 +213,12 @@ const CheckboxBlock = ({
                     </DialogActions>
                 </DialogContainer>
             </Dialog>
-            <Dialog open={modalDeleteIsOpen} onClose={() => handleCloseModal(true)} disableBackdropClick>
+            <Dialog open={modalDeleteIsOpen} 
+                    onClose={(e, reason) => {
+                        if (reason !== 'backdropClick') {
+                            handleCloseModal(true);
+                        }
+				    }}>
                 <DialogContainer>
                     <DialogTitle>Delete Resources</DialogTitle>
                     <DialogContent>
