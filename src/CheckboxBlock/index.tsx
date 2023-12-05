@@ -50,6 +50,8 @@ const CheckboxBlock = ({
     const [errorInRoleName, setErrorInRoleName] = React.useState<boolean>(false);
     const [errorHelperText, setErrorHelperText] = React.useState<string>('');
     const roleNameEl = React.useRef<HTMLInputElement>(null);
+    const allPermissions = permissionsTable._permissions;
+    const [lastCheckedPerm, setLastCheckedPerm] = React.useState<string>('');
 
     useEffect(() => {
         const roles = Object.keys(permissionsTable._roles);
@@ -72,8 +74,13 @@ const CheckboxBlock = ({
         return ret;
     };
 
-    const isChecked = (role: string, perm: string): boolean => {
+    const isChecked = (role: string, perm: string): boolean => {  
         return !!permissionsTable._roles[role]['permissions']?.includes(perm);
+    };
+
+    const isCheckedByAllInGroup = (role: string, perm: string) => {
+        const allSelectedPermissions = Object.keys(allPermissions).filter((el) => !perm.includes('.') && el.startsWith(perm));
+        return permissionsTable._roles[role]['permissions'].length === allSelectedPermissions.length && !perm.includes('.');
     };
 
     const isCheckedByParent = (role: string, perm: string): boolean => {
@@ -101,11 +108,17 @@ const CheckboxBlock = ({
                 }
             });
             permissionsTable._roles[role]['permissions'].push(perm);
+            const allSelectedPermissions = Object.keys(allPermissions).filter((item) => item.startsWith(`${perm}.`));
+            permissionsTable._roles[role]['permissions'] = [...permissionsTable._roles[role]['permissions'], ...allSelectedPermissions];
+            
         } else {
-            const pos = permissionsTable._roles[role]['permissions'].indexOf(perm);
-            permissionsTable._roles[role]['permissions'].splice(pos, 1);
+            if (!perm.includes('.')) {
+                permissionsTable._roles[role]['permissions'] = [];
+            } else {
+                const pos = permissionsTable._roles[role]['permissions'].indexOf(perm);
+                permissionsTable._roles[role]['permissions'].splice(pos, 1);
+            }
         }
-
         onChange({ ...permissionsTable });
     };
 
@@ -179,8 +192,9 @@ const CheckboxBlock = ({
                     if (reason !== 'backdropClick') {
                         handleCloseModal(false);
                     }
-                }}>
+                }}
                 
+            >
                 <DialogContainer>
                     <DialogTitle>Role</DialogTitle>
                     <DialogContent>
@@ -214,11 +228,11 @@ const CheckboxBlock = ({
                 </DialogContainer>
             </Dialog>
             <Dialog open={modalDeleteIsOpen} 
-                    onClose={(e, reason) => {
-                        if (reason !== 'backdropClick') {
-                            handleCloseModal(true);
-                        }
-		}}>
+							onClose={(e, reason) => {
+								if (reason !== 'backdropClick') {
+									handleCloseModal(true);
+								}
+							}}>
                 <DialogContainer>
                     <DialogTitle>Delete Resources</DialogTitle>
                     <DialogContent>
@@ -238,13 +252,16 @@ const CheckboxBlock = ({
                 </DialogContainer>
             </Dialog>
             <AddRoleBlock>
-                <span
-                    onClick={() => {
+                <button
+                    style={{fontWeight: 500, backgroundColor: 'rgb(154 155 156 / 20%)',
+                    borderRadius: '8px', fontSize: '14px', padding: '2px 6px', border: 0}}
+                    onClick={(e) => {
+                        e.preventDefault();
                         handleOpenModal('');
                     }}
                 >
                     <Components.AddRole />
-                </span>
+                </button>
             </AddRoleBlock>
             <StyledTable>
                 <StyledTHead>
@@ -269,7 +286,7 @@ const CheckboxBlock = ({
                                 </RoleActions>
                             </StyledCell>
                         ))}
-                        <TableCell>&nbsp;</TableCell>
+                        {/* <TableCell>&nbsp;</TableCell> */}
                     </TableRow>
                 </StyledTHead>
                 <TableBody>
@@ -284,9 +301,12 @@ const CheckboxBlock = ({
                                             <StyledCheckbox
                                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                                     const checked = e.target.checked;
+                                                    setLastCheckedPerm(perm);
                                                     handleCheckboxChange(checked, role, perm);
                                                 }}
-                                                checked={itemChecked || itemCheckedByParent}
+                                                checked={itemChecked || itemCheckedByParent || 
+                                                    (!perm.includes('.') && isCheckedByAllInGroup(role, perm) && 
+                                                    lastCheckedPerm === perm)}
                                                 disabled={itemCheckedByParent}
                                                 color="primary"
                                                 size="small"
@@ -294,7 +314,7 @@ const CheckboxBlock = ({
                                         </StyledCell>
                                     );
                                 })}
-                                <TableCell>&nbsp;</TableCell>
+                                {/* <TableCell>&nbsp;</TableCell> */}
                             </StyledRow>
                         );
                     })}
@@ -307,10 +327,7 @@ const CheckboxBlock = ({
 export default CheckboxBlock;
 
 const StyledCheckbox = styled(Checkbox)`
-    &.MuiCheckbox-root {
-        padding: 0;
-    }
-
+    padding: 7px!important;
     svg {
         font-size: 17px;
     }
@@ -327,7 +344,7 @@ const StyledTHead = styled(TableHead)`
         height: 34px;
     }
     .MuiTableCell-root {
-        padding: 0 15px;
+        padding: 0;
         border-bottom: 0;
     }
 `;
@@ -335,12 +352,17 @@ const StyledTHead = styled(TableHead)`
 const StyledRow = styled(TableRow)`
     border: 1px solid transparent;
 
-    .MuiTableCell-root {
+    line-height: 21px;
+    font-size: 14px;
+    padding: 0 15px;
+    border-bottom: 0;
+    &.MuiTableCell-root {
         line-height: 21px;
         font-size: 14px;
-        padding: 5px 15px;
+        padding: 0 15px;
         border-bottom: 0;
     }
+
 `;
 
 const StyledCell = styled(TableCell)`
@@ -350,6 +372,11 @@ const StyledCell = styled(TableCell)`
 
     &.MuiTableCell-root {
         text-align: center;
+        padding: 0;
+    }
+
+    &.MuiTableCell-body {
+        padding: 0;
     }
 `;
 
@@ -375,6 +402,7 @@ const DialogContainer = styled.div`
 
 const AddRoleBlock = styled(Typography)`
     height: 27px;
+    margin-bottom: 10px;
     padding-left: 14px;
     padding-top: 5px;
     position: sticky;
