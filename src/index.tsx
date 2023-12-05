@@ -4,10 +4,10 @@ import Button from '@material-ui/core/Button';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Block';
-import ArrowDropDown from '@material-ui/icons/ArrowDropDown';
-import ArrowRight from '@material-ui/icons/ArrowRight';
-import FiberManualRecord from '@material-ui/icons/FiberManualRecord';
-import MenuIcon from '@material-ui/icons/Menu';
+import SmallArrowDownIcon from './Components/icons/SmallArrowDownIcon';
+import SmallArrowRightIcon from './Components/icons/SmallArrowRightIcon';
+import MenuIcon from './Components/icons/MenuIcon';
+import FiberElIcon from './Components/icons/FiberElIcon';
 import { getAllResources } from './utils';
 import TreeBlock from './TreeBlock';
 import AddResource from './Components/AddResource';
@@ -17,7 +17,7 @@ import CheckboxTableContainer from './Components/CheckboxTableContainer';
 import CheckboxBlock from './CheckboxBlock';
 import { PermissionsObject, ResourcesItem } from './types';
 
-const EMPTY_RBAC_OBJECT = { _resources: {}, _roles: {} };
+const EMPTY_RBAC_OBJECT = { _resources: {}, _roles: {}, _permissions: {} };
 
 export interface ButtonsInterface {
     cancelButton?: ComponentType;
@@ -99,9 +99,10 @@ const Rbac = ({
 
     const handleCheckboxChanges = (newData: PermissionsObject) => {
         setPermissionsTable(newData);
-        const ret: PermissionsObject = { _resources: {}, _roles: {} };
+        const ret: PermissionsObject = { _resources: {}, _roles: {}, _permissions: {} };
 
         Object.keys(newData._roles).forEach((item) => {
+            newData._roles[item].permissions = newData._roles[item].permissions.filter((el) => el.includes('.'));
             ret._roles[item] = newData._roles[item];
         });
 
@@ -141,10 +142,10 @@ const Rbac = ({
             TreeAddIcon: icons.treeAddIcon || AddCircleOutlineIcon,
             TreeEditIcon: icons.treeEditIcon || EditIcon,
             TreeDeleteIcon: icons.treeDeleteIcon || DeleteIcon,
-            TreeNodeIcon: icons.treeNodeIcon || FiberManualRecord,
+            TreeNodeIcon: icons.treeNodeIcon || FiberElIcon,
             TreeParentIcon: icons.treeParentIcon || MenuIcon,
-            TreeCollapseIcon: icons.treeCollapseIcon || ArrowDropDown,
-            TreeExpandIcon: icons.treeExpandIcon || ArrowRight,
+            TreeCollapseIcon: icons.treeCollapseIcon || SmallArrowDownIcon,
+            TreeExpandIcon: icons.treeExpandIcon || SmallArrowRightIcon,
         };
     }, [icons]);
 
