@@ -139,9 +139,9 @@ const TreeBlock = ({
             <Dialog
                 open={modalIsOpen}
                 onClose={(e, reason) => {
-                    if (reason !== 'backdropClick') {
-                        handleCloseModal(false);
-                    }
+									if (reason !== 'backdropClick') {
+										handleCloseModal(false);
+									}
                 }}
             >
                 <DialogContainer>
@@ -210,12 +210,11 @@ const TreeBlock = ({
                     </DialogActions>
                 </DialogContainer>
             </Dialog>
-            <Dialog open={modalDeleteIsOpen} 
-                	onClose={(e, reason) => {
-                        if (reason !== 'backdropClick') {
-                            handleCloseModal(true);
-                        }
-                    }}>
+            <Dialog open={modalDeleteIsOpen} onClose={(e, reason) => {
+							if (reason !== 'backdropClick') {
+								handleCloseModal(true);
+							}
+						}}>
                 <DialogContainer>
                     <DialogTitle>Delete Resources</DialogTitle>
                     <DialogContent>
@@ -276,12 +275,13 @@ const TreeBlock = ({
 export default TreeBlock;
 
 const TreeHeaderContainer = withTheme(styled.div`
-    display: flex;
     font-size: 18px;
-    height: 86px;
+    height: 90px;
+    display: grid;
+    grid-template-columns: 1fr 0.6fr;
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: ${({ theme }: ThemeType) => theme.palette.text.disabled};
+    border-bottom-color: ${({ theme }) => theme.palette.text.disabled};
     margin-left: 22px;
 
     div {
@@ -293,6 +293,7 @@ const TreeHeaderContainer = withTheme(styled.div`
 const ResourceTitle = styled.div`
     width: 15%;
     min-width: 250px;
+    marginLeft: 0;
 `;
 
 const PermissionTitle = styled.div`
@@ -343,13 +344,13 @@ const PermissionStyledInput = withTheme(styled(TextField)`
     flex-grow: 1;
 
     .MuiInputBase-root {
-        color: ${({ theme }: ThemeType) => theme.palette.text.disabled};
+        color: ${({ theme }) => theme.palette.text.disabled};
     }
 
     & input {
-        color: ${({ theme }: ThemeType) => theme.palette.text.primary};
+        color: ${({ theme }) => theme.palette.text.primary};
         &.Mui-disabled {
-            color: ${({ theme }: ThemeType) => theme.palette.text.disabled};
+            color: ${({ theme }) => theme.palette.text.disabled};
             cursor: not-allowed;
         }
     }
