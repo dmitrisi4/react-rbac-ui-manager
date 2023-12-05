@@ -55,4 +55,12 @@ interface RoleItem {
     };
 }
 
-export type PermissionsObject = ResourcesItem & RoleItem;
+export interface PermissionsItem {
+    _permissions: {
+        [k: string]: {
+            name: string;
+        };
+    };
+}
+
+export type PermissionsObject = ResourcesItem & RoleItem & PermissionsItem;
