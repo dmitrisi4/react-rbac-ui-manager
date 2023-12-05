@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import TreeItem from '@material-ui/lab/TreeItem';
 import { withTheme } from '@material-ui/core';
 import { FnTreeBlockHandleOpenModal, IconsInterfaceInternal, ResourcesItem } from '../types';
+import { type } from 'os';
 
 interface TreeGeneratorProps {
     resources: ResourcesItem['_resources'];
@@ -37,7 +38,7 @@ const TreeGenerator = ({ resources, handleOpenModal, icons: Icons }: TreeGenerat
                         key={resource}
                         nodeId={resource}
                         label={
-                            <TreeItemContent $hasChildren={hasChildren}>
+                            <TreeItemContent $hasChildren={hasChildren as boolean}>
                                 {hasChildren ? (
                                     <Icons.TreeParentIcon color="primary" />
                                 ) : (
@@ -111,18 +112,23 @@ const ItemResourceName = styled.span<{ $hasChildren: boolean }>`
 `;
 
 export const ItemResource = withTheme(styled.span`
-    position: absolute;
-    left: max(15%, 250px);
+    // position: absolute;
+    // left: max(15%, 250px);
     color: ${(props: any) => props.theme.palette.text.disabled};
+    font-size: 14px;
 `);
 
-export const TreeItemContent = withTheme(styled.div`
-    display: flex;
+type TreeItemContentProps = {
+	$hasChildren: boolean;
+}
+export const TreeItemContent = withTheme(styled.div<TreeItemContentProps>`
     line-height: 31px;
     border-width: 0 0 1px 0;
     border-style: solid;
-    border-color: ${(props: any) => (props['$hasChildren'] ? props.theme.palette.text.disabled : 'transparent')};
+    border-color: ${(props: any) => (props.hasChildren ? props.theme.palette.text.disabled : 'transparent')};
     align-items: center;
+    display: grid;
+    grid-template-columns: 24px 1.5fr 0.65fr 0.3fr;
 
     &:hover ${ActionsContainer} {
         display: block;
